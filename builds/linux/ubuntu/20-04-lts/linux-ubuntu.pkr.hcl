@@ -179,6 +179,7 @@ build {
     extra_arguments = [
       "--extra-vars", "display_skipped_hosts=false",
       "--extra-vars", "BUILD_USERNAME=${var.build_username}",
+      "--extra-vars", "BUILD_PASSWORD=${var.build_password}",
       "--extra-vars", "BUILD_SECRET='${var.build_key}'",
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
       "--extra-vars", "ANSIBLE_SECRET='${var.ansible_key}'",

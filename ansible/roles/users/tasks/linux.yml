@@ -29,3 +29,6 @@
 - name: "Adding the local user for Ansible to passwordless sudoers."
   shell: |
     sudo bash -c "echo \"""{{ANSIBLE_USERNAME}}"" ALL=(ALL) NOPASSWD:ALL\" >> /etc/sudoers"
+- name: "Set password for the default local user."
+  shell: |
+    echo {{BUILD_USERNAME}}:{{BUILD_PASSWORD}} | sudo chpasswd

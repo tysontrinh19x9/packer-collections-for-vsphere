@@ -41,7 +41,7 @@ autoinstall:
         type: format
         id: format-efi
       - device: disk-sda
-        size: 1G
+        size: 1024M
         wipe: superblock
         number: 2
         type: partition
@@ -52,7 +52,7 @@ autoinstall:
         type: format
         id: format-boot
       - device: disk-sda
-        size: 18G
+        size: -1
         wipe: superblock
         number: 3
         type: partition
