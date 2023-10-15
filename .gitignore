@@ -64,3 +64,4 @@ manifests/*.json
 .trunk/out
 .trunk/plugins/trunk
 .trunk/trunk.yaml
+.idea
