@@ -23,3 +23,5 @@ jobs:
           VALIDATE_ANSIBLE: false
           VALIDATE_TERRAGRUNT: false
           VALIDATE_MARKDOWN: false
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+

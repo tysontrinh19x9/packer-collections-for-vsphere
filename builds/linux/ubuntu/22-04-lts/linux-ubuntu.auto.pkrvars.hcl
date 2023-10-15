@@ -25,13 +25,13 @@ vm_cpu_cores             = 1
 vm_cpu_hot_add           = false
 vm_mem_size              = 2048
 vm_mem_hot_add           = false
-vm_disk_size             = 40960
+vm_disk_size             = 10240
 vm_disk_controller_type  = ["pvscsi"]
 vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
 // Removable Media Settings
-iso_path           = "iso/linux/ubuntu"
+iso_path           = "ISO"
 iso_file           = "ubuntu-22.04.3-live-server-amd64.iso"
 
 // Boot Settings

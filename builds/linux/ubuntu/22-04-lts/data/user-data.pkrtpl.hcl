@@ -46,7 +46,7 @@ autoinstall:
         number: 2
         type: partition
         id: partition-1
-      - fstype: xfs
+      - fstype: ext4
         volume: partition-1
         label: BOOTFS
         type: format
@@ -64,81 +64,15 @@ autoinstall:
         id: lvm_volgroup-0
       - name: root
         volgroup: lvm_volgroup-0
-        size: 12288M
+        size: 100%
         wipe: superblock
         type: lvm_partition
         id: lvm_partition-root
-      - fstype: xfs
+      - fstype: ext4
         volume: lvm_partition-root
         type: format
         label: ROOTFS
         id: format-root
-      - name: home
-        volgroup: lvm_volgroup-0
-        size: 4096M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-home
-      - fstype: xfs
-        volume: lvm_partition-home
-        type: format
-        label: HOMEFS
-        id: format-home
-      - name: opt
-        volgroup: lvm_volgroup-0
-        size: 2048M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-opt
-      - fstype: xfs
-        volume: lvm_partition-opt
-        type: format
-        label: OPTFS
-        id: format-opt
-      - name: tmp
-        volgroup: lvm_volgroup-0
-        size: 3072M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-tmp
-      - fstype: xfs
-        volume: lvm_partition-tmp
-        type: format
-        label: TMPFS
-        id: format-tmp
-      - name: var
-        volgroup: lvm_volgroup-0
-        size: 4096M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-var
-      - fstype: xfs
-        volume: lvm_partition-var
-        type: format
-        label: VARFS
-        id: format-var
-      - name: log
-        volgroup: lvm_volgroup-0
-        size: 4096M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-log
-      - fstype: xfs
-        volume: lvm_partition-log
-        type: format
-        label: LOGFS
-        id: format-log
-      - name: audit
-        volgroup: lvm_volgroup-0
-        size: 4096M
-        wipe: superblock
-        type: lvm_partition
-        id: lvm_partition-audit
-      - fstype: xfs
-        volume: lvm_partition-audit
-        type: format
-        label: AUDITFS
-        id: format-audit
       - path: /
         device: format-root
         type: mount
@@ -151,30 +85,6 @@ autoinstall:
         device: format-efi
         type: mount
         id: mount-efi
-      - path: /home
-        device: format-home
-        type: mount
-        id: mount-home
-      - path: /opt
-        device: format-opt
-        type: mount
-        id: mount-opt
-      - path: /tmp
-        device: format-tmp
-        type: mount
-        id: mount-tmp
-      - path: /var
-        device: format-var
-        type: mount
-        id: mount-var
-      - path: /var/log
-        device: format-log
-        type: mount
-        id: mount-log
-      - path: /var/audit
-        device: format-audit
-        type: mount
-        id: mount-audit
   identity:
     hostname: ubuntu-server
     username: ${build_username}
