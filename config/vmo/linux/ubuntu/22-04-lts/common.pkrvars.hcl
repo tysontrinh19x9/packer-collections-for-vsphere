@@ -24,7 +24,7 @@ common_ovf_export_enabled   = false
 common_ovf_export_overwrite = false
 
 // Removable Media Settings
-common_iso_datastore = "SSD"
+common_iso_datastore = "SSD_500_230"
 
 // Boot and Provisioning Settings
 common_data_source      = "disk"
