@@ -36,25 +36,17 @@ d-i partman-auto/expert_recipe string                     \
     filesystem{ vfat }                                    \
     label { EFIFS }                                       \
     .                                                     \
-    1024 1024 1024 xfs                                    \
+    1024 1024 1024 ext4                                    \
     $bootable{ }                                          \
     $primary{ }                                           \
     mountpoint{ /boot }                                   \
     method{ format }                                      \
     format{ }                                             \
     use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
+    filesystem{ ext4 }                                     \
     label { BOOTFS }                                      \
     .                                                     \
-    1024 1024 1024 linux-swap                             \
-    $lvmok{ }                                             \
-    lv_name{ lv_swap }                             	   \
-    in_vg { sysvg }                                       \
-    method{ swap }                                        \
-    format{ }                                             \
-    label { SWAPFS }                                      \
-    .                                                     \
-    12288 12288 -1 xfs                                    \
+    8192 8192 -1 ext4                                    \
     $lvmok{ }                                             \
     mountpoint{ / }                                       \
     lv_name{ lv_root }                                    \
@@ -62,87 +54,8 @@ d-i partman-auto/expert_recipe string                     \
     method{ format }                                      \
     format{ }                                             \
     use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
+    filesystem{ ext4 }                                     \
     label { ROOTFS }                                      \
-    .                                                     \
-    4096 4096 4096 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /home }                                   \
-    lv_name{ lv_home }                                    \
-    in_vg { sysvg }                                	   \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { HOMEFS }                                      \
-    options/nodev{ nodev }                                \
-    options/nosuid{ nosuid }                              \
-    .                                                     \
-    2048 2048 2048 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /opt }                                    \
-    lv_name{ lv_opt }                                     \
-    in_vg { sysvg }                                       \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { OPTFS }                                       \
-    options/nodev{ nodev }                                \
-    .                                                     \
-    3072 3072 3072 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /tmp }                                    \
-    lv_name{ lv_tmp }                                     \
-    in_vg { sysvg }                                	   \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { TMPFS }                                       \
-    options/nodev{ nodev }                                \
-    options/noexec{ noexec }                              \
-    options/nosuid{ nosuid }                              \
-    .                                                     \
-    4096 4096 4096 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /var }                                    \
-    lv_name{ lv_var }                                     \
-    in_vg { sysvg }                                	   \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { VARFS }                                       \
-    options/nodev{ nodev }                                \
-    .                                                     \
-    4096 4096 4096 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /var/log }                                \
-    lv_name{ lv_log }                                     \
-    in_vg { sysvg }                                	   \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { LOGFS }                                       \
-    options/nodev{ nodev }                                \
-    options/noexec{ noexec }                              \
-    options/nosuid{ nosuid }                              \
-    .                                                     \
-    4096 4096 4096 xfs                                    \
-    $lvmok{ }                                             \
-    mountpoint{ /var/log/audit }                          \
-    lv_name{ lv_audit }                                   \
-    in_vg { sysvg }                                	   \
-    method{ format }                                      \
-    format{ }                                             \
-    use_filesystem{ }                                     \
-    filesystem{ xfs }                                     \
-    label { AUDITFS }                                     \
-    options/nodev{ nodev }                                \
-    options/noexec{ noexec }                              \
-    options/nosuid{ nosuid }                              \
     .                                                     \
 
 d-i partman-partitioning/confirm_write_new_label boolean true
