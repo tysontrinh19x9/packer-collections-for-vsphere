@@ -43,7 +43,8 @@ terraform.rc
 
 # Configurations
 ## Ignore default config directory.
-config/
+config/*
+!config/vmo
 
 # Artifacts
 ## Ignore artifacts directory.
