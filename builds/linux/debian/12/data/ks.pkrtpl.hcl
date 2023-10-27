@@ -46,7 +46,15 @@ d-i partman-auto/expert_recipe string                     \
     filesystem{ ext4 }                                     \
     label { BOOTFS }                                      \
     .                                                     \
-    8192 8192 -1 ext4                                    \
+    1024 1024 1024 linux-swap                             \
+    $lvmok{ }                                             \
+    lv_name{ lv_swap }                             	   \
+    in_vg { sysvg }                                       \
+    method{ swap }                                        \
+    format{ }                                             \
+    label { SWAPFS }                                      \
+    .                                                     \
+    7168 7168 -1 ext4                                    \
     $lvmok{ }                                             \
     mountpoint{ / }                                       \
     lv_name{ lv_root }                                    \
@@ -82,7 +90,7 @@ d-i passwd/user-password-crypted password ${build_password_encrypted}
 
 # Package Configuration
 d-i pkgsel/run_tasksel boolean false
-d-i pkgsel/include string openssh-server open-vm-tools python3-apt perl
+d-i pkgsel/include string openssh-server open-vm-tools python3-apt perl cloud-init
 
 # Add User to Sudoers
 d-i preseed/late_command string \
