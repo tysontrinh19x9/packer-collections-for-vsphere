@@ -9,7 +9,7 @@
 */
 
 // Default Account Credentials
-build_username           = "admin"
-build_password           = "nimda"
-build_password_encrypted = "$6$rounds=4096$fVGIXjwzdGHxN5pE$Ff9p.uzwQLFSEcG5ZvM2DKz2On9FNzbwlBxzw4iqQcC8TbJ6HjMqjcvHZROI5IwIlIJHGmnIi42mDtqcCLEk11"
-build_key                = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAC1xIZk58F+aDWPnBsDzYK4dnwY/IWk5oqTKvBalxOuUuXUd33LcAEIYJHY+hNrhT/pmdDm24VWGnCTk12otCC4WwGvpKWUEDolTEE1hjmGcaXg0b9sIF7NA+Gqq0cuy7VpIXJg4JbDF8pb3gyzxaLZWrDpgj2j7SGXDgnBv3hF+46UcA== admin@linux"
+build_username           = "ubuntu"
+build_password           = "Ubuntu@packer"
+build_password_encrypted = "$6$5aUxmPPoGKA6bfHF$58bT6EzrRmGbibjIQAxnesO59/hnMm5BQTW8qMme2wdo1KAvXIt1ua8DTZAexg5rEv2pESqb67VWG24q7xw6S."
+build_key                = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGkbIDM9uCe16Ynaq1p7g67Z4YGLZzT6NHe608uTboUjZCQGIOmgkvAjIF+DUa9vUcAa4uau9gNO8t92jS9bb3uLgAnaShm3V4/byvjdboOfgWgA6NzkdCa1SJgyzxmi5oIfOTi/l4NAk8ZM1S2N/QQJMADwgWjoLCOoVhA5QTy/coreQ== ubuntu@vsphere.local"

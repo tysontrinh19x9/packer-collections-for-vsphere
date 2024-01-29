@@ -1,7 +1,7 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
-# Debian 11 (Bullseye) Preseed File
+# Debian 11
 # https://www.debian.org/releases/bullseye/amd64/
 
 # Locale and Keyboard
@@ -36,14 +36,14 @@ d-i partman-auto/expert_recipe string                     \
     filesystem{ vfat }                                    \
     label { EFIFS }                                       \
     .                                                     \
-    1024 1024 1024 ext4                                    \
+    1024 1024 1024 xfs                                    \
     $bootable{ }                                          \
     $primary{ }                                           \
     mountpoint{ /boot }                                   \
     method{ format }                                      \
     format{ }                                             \
     use_filesystem{ }                                     \
-    filesystem{ ext4 }                                     \
+    filesystem{ xfs }                                     \
     label { BOOTFS }                                      \
     .                                                     \
     1024 1024 1024 linux-swap                             \
@@ -54,7 +54,7 @@ d-i partman-auto/expert_recipe string                     \
     format{ }                                             \
     label { SWAPFS }                                      \
     .                                                     \
-    7168 7168 -1 ext4                                    \
+    12288 12288 -1 xfs                                    \
     $lvmok{ }                                             \
     mountpoint{ / }                                       \
     lv_name{ lv_root }                                    \
@@ -62,8 +62,87 @@ d-i partman-auto/expert_recipe string                     \
     method{ format }                                      \
     format{ }                                             \
     use_filesystem{ }                                     \
-    filesystem{ ext4 }                                     \
+    filesystem{ xfs }                                     \
     label { ROOTFS }                                      \
+    .                                                     \
+    4096 4096 4096 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /home }                                   \
+    lv_name{ lv_home }                                    \
+    in_vg { sysvg }                                	   \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { HOMEFS }                                      \
+    options/nodev{ nodev }                                \
+    options/nosuid{ nosuid }                              \
+    .                                                     \
+    2048 2048 2048 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /opt }                                    \
+    lv_name{ lv_opt }                                     \
+    in_vg { sysvg }                                       \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { OPTFS }                                       \
+    options/nodev{ nodev }                                \
+    .                                                     \
+    3072 3072 3072 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /tmp }                                    \
+    lv_name{ lv_tmp }                                     \
+    in_vg { sysvg }                                	   \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { TMPFS }                                       \
+    options/nodev{ nodev }                                \
+    options/noexec{ noexec }                              \
+    options/nosuid{ nosuid }                              \
+    .                                                     \
+    4096 4096 4096 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /var }                                    \
+    lv_name{ lv_var }                                     \
+    in_vg { sysvg }                                	   \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { VARFS }                                       \
+    options/nodev{ nodev }                                \
+    .                                                     \
+    4096 4096 4096 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /var/log }                                \
+    lv_name{ lv_log }                                     \
+    in_vg { sysvg }                                	   \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { LOGFS }                                       \
+    options/nodev{ nodev }                                \
+    options/noexec{ noexec }                              \
+    options/nosuid{ nosuid }                              \
+    .                                                     \
+    4096 4096 4096 xfs                                    \
+    $lvmok{ }                                             \
+    mountpoint{ /var/log/audit }                          \
+    lv_name{ lv_audit }                                   \
+    in_vg { sysvg }                                	   \
+    method{ format }                                      \
+    format{ }                                             \
+    use_filesystem{ }                                     \
+    filesystem{ xfs }                                     \
+    label { AUDITFS }                                     \
+    options/nodev{ nodev }                                \
+    options/noexec{ noexec }                              \
+    options/nosuid{ nosuid }                              \
     .                                                     \
 
 d-i partman-partitioning/confirm_write_new_label boolean true
@@ -90,7 +169,7 @@ d-i passwd/user-password-crypted password ${build_password_encrypted}
 
 # Package Configuration
 d-i pkgsel/run_tasksel boolean false
-d-i pkgsel/include string openssh-server open-vm-tools python3-apt perl cloud-init
+d-i pkgsel/include string openssh-server open-vm-tools python3-apt perl
 
 # Add User to Sudoers
 d-i preseed/late_command string \

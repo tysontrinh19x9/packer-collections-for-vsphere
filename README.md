@@ -1,5 +1,5 @@
 <!--
-Copyright 2023 VMware, Inc. All rights reserved
+Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 -->
 
@@ -28,6 +28,7 @@ This project supports the following guest operating systems:
 | VMware Photon OS             | 4         |
 | Debian                       | 12        |
 | Debian                       | 11        |
+| Ubuntu Server                | 23.10     |
 | Ubuntu Server                | 22.04 LTS |
 | Ubuntu Server                | 20.04 LTS |
 | Red Hat Enterprise Linux     | 9         |
@@ -37,8 +38,8 @@ This project supports the following guest operating systems:
 | AlmaLinux OS                 | 8         |
 | Rocky Linux                  | 9         |
 | Rocky Linux                  | 8         |
-| Oracle Enterprise Linux      | 9         |
-| Oracle Enterprise Linux      | 8         |
+| Oracle Linux                 | 9         |
+| Oracle Linux                 | 8         |
 | CentOS Stream                | 9         |
 | CentOS Stream                | 8         |
 | CentOS Linux                 | 7         |
@@ -82,7 +83,7 @@ You can also start a discussion on the [discussions][gh-discussions] area to ask
 
 ## License
 
-Copyright 2020-2023 VMware, Inc.
+Copyright 2023 Broadcom. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

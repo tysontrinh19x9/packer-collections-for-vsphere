@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Ubuntu Server 22.04 LTS template using the Packer Builder for VMware vSphere (vsphere-iso).
+    Ubuntu Server 22.04 LTS build definition.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 //  BLOCK: packer
@@ -12,13 +13,17 @@
 packer {
   required_version = ">= 1.9.4"
   required_plugins {
-    git = {
-      version = ">= 0.4.3"
-      source  = "github.com/ethanmdavidson/git"
-    }
     vsphere = {
-      version = ">= v1.2.1"
       source  = "github.com/hashicorp/vsphere"
+      version = ">= 1.2.1"
+    }
+    ansible = {
+      source  = "github.com/hashicorp/ansible"
+      version = ">= 1.1.0"
+    }
+    git = {
+      source  = "github.com/ethanmdavidson/git"
+      version = ">= 0.4.3"
     }
   }
 }
@@ -70,11 +75,13 @@ source "vsphere-iso" "linux-ubuntu" {
   insecure_connection = var.vsphere_insecure_connection
 
   // vSphere Settings
-  datacenter = var.vsphere_datacenter
-  cluster    = var.vsphere_cluster
-  host       = var.vsphere_host
-  datastore  = var.vsphere_datastore
-  folder     = var.vsphere_folder
+  datacenter                     = var.vsphere_datacenter
+  cluster                        = var.vsphere_cluster
+  host                           = var.vsphere_host
+  datastore                      = var.vsphere_datastore
+  folder                         = var.vsphere_folder
+  resource_pool                  = var.vsphere_resource_pool
+  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
 
   // Virtual Machine Settings
   vm_name              = local.vm_name
@@ -113,17 +120,27 @@ source "vsphere-iso" "linux-ubuntu" {
   boot_order    = var.vm_boot_order
   boot_wait     = var.vm_boot_wait
   boot_command = [
-    "c<wait>",
+    // This waits for 3 seconds, sends the "c" key, and then waits for another 3 seconds. In the GRUB boot loader, this is used to enter command line mode.
+    "<wait3s>c<wait3s>",
+    // This types a command to load the Linux kernel from the specified path with the 'autoinstall' option and the value of the 'data_source_command' local variable. 
+    // The 'autoinstall' option is used to automate the installation process. 
+    // The 'data_source_command' local variable is used to specify the kickstart data source configured in the common variables. 
     "linux /casper/vmlinuz --- autoinstall ${local.data_source_command}",
+    // This sends the "enter" key and then waits. This is typically used to execute the command and give the system time to process it.
     "<enter><wait>",
+    // This types a command to load the initial RAM disk from the specified path.
     "initrd /casper/initrd",
+    // This sends the "enter" key and then waits. This is typically used to execute the command and give the system time to process it.
     "<enter><wait>",
+    // This types the "boot" command. This starts the boot process using the loaded kernel and initial RAM disk.
     "boot",
+    // This sends the "enter" key. This is typically used to execute the command.
     "<enter>"
   ]
-  ip_wait_timeout  = var.common_ip_wait_timeout
-  shutdown_command = "echo '${var.build_password}' | sudo -S -E shutdown -P now"
-  shutdown_timeout = var.common_shutdown_timeout
+  ip_wait_timeout   = var.common_ip_wait_timeout
+  ip_settle_timeout = var.common_ip_settle_timeout
+  shutdown_command  = "echo '${var.build_password}' | sudo -S -E shutdown -P now"
+  shutdown_timeout  = var.common_shutdown_timeout
 
   // Communicator Settings and Credentials
   communicator       = "ssh"
@@ -170,10 +187,11 @@ build {
   sources = ["source.vsphere-iso.linux-ubuntu"]
 
   provisioner "ansible" {
-    user          = var.build_username
-
-    playbook_file = "${path.cwd}/ansible/main.yml"
-    roles_path    = "${path.cwd}/ansible/roles"
+    user                   = var.build_username
+    galaxy_file            = "${path.cwd}/ansible/requirements.yml"
+    galaxy_force_with_deps = true
+    playbook_file          = "${path.cwd}/ansible/main.yml"
+    roles_path             = "${path.cwd}/ansible/roles"
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.cwd}/ansible/ansible.cfg"
     ]
@@ -181,9 +199,9 @@ build {
       "--extra-vars", "display_skipped_hosts=false",
       "--extra-vars", "BUILD_USERNAME=${var.build_username}",
       "--extra-vars", "BUILD_PASSWORD=${var.build_password}",
-      "--extra-vars", "BUILD_SECRET='${var.build_key}'",
+      "--extra-vars", "BUILD_KEY='${var.build_key}'",
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
-      "--extra-vars", "ANSIBLE_SECRET='${var.ansible_key}'",
+      "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
     ]
   }
 

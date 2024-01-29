@@ -28,22 +28,6 @@ The project is tested on the following operating systems for the Packer host [^1
 |                                                          | Sonoma    | Intel        |
 ::end-spantable::
 
-???+ tip ":material-greater-than-or-equal: OpenSSH 9.0"
-    If your :material-ansible: [Ansible][ansible-ssh-connection] control node uses OpenSSH 9.0 or higher, you must add an additional option to enable `scp`.
-
-    1. Check the OpenSSH version:
-
-        ```shell
-        ssh -V
-        ```
-
-    2. If the version is 9.0 or higher, add the following to your the `ansible/ansible.cfg` file:
-
-        ```vi
-        [ssh_connection]
-        scp_extra_args = "-O"
-        ```
-
 ## :simple-packer: &nbsp; Packer
 
 ### :octicons-terminal-24: &nbsp; Packer CLI
@@ -144,10 +128,10 @@ The following additional software packages must be installed on the operating sy
         tdnf -y install git jq xorriso
         ```
 
-    - HashiCorp [Terraform][terraform-install] 1.5.0 or higher.
+    - HashiCorp [Terraform][terraform-install] 1.6.0 or higher.
 
         ```shell
-        TERRAFORM_VERSION="1.5.0"
+        TERRAFORM_VERSION="1.6.0"
         OS_PACKAGES="wget unzip"
 
         if [[ $(uname -m) == "x86_64" ]]; then
@@ -175,7 +159,7 @@ The following additional software packages must be installed on the operating sy
 
     - mkpasswd - A password generating utility.
 
-    - HashiCorp [Terraform][terraform-install] 1.5.0 or higher.
+    - HashiCorp [Terraform][terraform-install] 1.6.0 or higher.
 
         ```shell
         pip3 install --user ansible-core==2.15
@@ -198,7 +182,7 @@ The following additional software packages must be installed on the operating sy
     - [ansible-core][ansible-docs] 2.15.
     - [jq][jq] - A command-line JSON processor.
     - Coreutils
-    - HashiCorp [Terraform][terraform-install] 1.5.0 or higher.
+    - HashiCorp [Terraform][terraform-install] 1.6.0 or higher.
     - [gomplate][gomplate-install] 3.11.5 or higher.
 
         ```shell

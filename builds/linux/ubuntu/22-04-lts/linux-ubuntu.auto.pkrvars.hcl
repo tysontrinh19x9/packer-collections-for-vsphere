@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Ubuntu Server 22.04 LTS variables used by the Packer Plugin for VMware vSphere (vsphere-iso).
+    Ubuntu Server 22.04 LTS build variables.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 // Guest Operating System Metadata

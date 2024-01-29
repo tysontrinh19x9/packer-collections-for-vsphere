@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    SUSE Linux Enterprise Server 15 variables used by the Packer Plugin for VMware vSphere (vsphere-iso).
+    SUSE Linux Enterprise Server 15 build variables.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 // Guest Operating System Metadata
@@ -12,7 +13,7 @@ vm_guest_os_keyboard = "us"
 vm_guest_os_timezone = "UTC"
 vm_guest_os_family   = "linux"
 vm_guest_os_name     = "sles"
-vm_guest_os_version  = "15.4"
+vm_guest_os_version  = "15.5"
 
 // Virtual Machine Guest Operating System Setting
 vm_guest_os_type = "sles15_64Guest"
@@ -31,8 +32,8 @@ vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
 // Removable Media Settings
-iso_path           = "iso/linux/suse"
-iso_file           = "SLE-15-SP4-Full-x86_64-GM-Media1.iso"
+iso_path = "iso/linux/suse"
+iso_file = "SLE-15-SP5-Full-x86_64-GM-Media1.iso"
 
 // Boot Settings
 vm_boot_order = "disk,cdrom"

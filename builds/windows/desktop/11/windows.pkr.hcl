@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Microsoft Windows 11 template using the Packer Builder for VMware vSphere (vsphere-iso).
+    Microsoft Windows 11 build definition.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 //  BLOCK: packer
@@ -12,17 +13,17 @@
 packer {
   required_version = ">= 1.9.4"
   required_plugins {
-    git = {
-      version = ">= 0.4.3"
-      source  = "github.com/ethanmdavidson/git"
-    }
     vsphere = {
-      version = ">= v1.2.1"
       source  = "github.com/hashicorp/vsphere"
+      version = ">= 1.2.1"
     }
     windows-update = {
-      version = ">= 0.14.3"
       source  = "github.com/rgl/windows-update"
+      version = ">= 0.14.3"
+    }
+    git = {
+      source  = "github.com/ethanmdavidson/git"
+      version = ">= 0.4.3"
     }
   }
 }
@@ -63,11 +64,13 @@ source "vsphere-iso" "windows-desktop-pro" {
   insecure_connection = var.vsphere_insecure_connection
 
   // vSphere Settings
-  datacenter = var.vsphere_datacenter
-  cluster    = var.vsphere_cluster
-  host       = var.vsphere_host
-  datastore  = var.vsphere_datastore
-  folder     = var.vsphere_folder
+  datacenter                     = var.vsphere_datacenter
+  cluster                        = var.vsphere_cluster
+  host                           = var.vsphere_host
+  datastore                      = var.vsphere_datastore
+  folder                         = var.vsphere_folder
+  resource_pool                  = var.vsphere_resource_pool
+  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
 
   // Virtual Machine Settings
   vm_name              = local.vm_name_pro
@@ -97,7 +100,7 @@ source "vsphere-iso" "windows-desktop-pro" {
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths    = local.iso_paths
+  iso_paths = local.iso_paths
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -116,14 +119,15 @@ source "vsphere-iso" "windows-desktop-pro" {
   }
 
   // Boot and Provisioning Settings
-  http_port_min    = var.common_http_port_min
-  http_port_max    = var.common_http_port_max
-  boot_order       = var.vm_boot_order
-  boot_wait        = var.vm_boot_wait
-  boot_command     = var.vm_boot_command
-  ip_wait_timeout  = var.common_ip_wait_timeout
-  shutdown_command = var.vm_shutdown_command
-  shutdown_timeout = var.common_shutdown_timeout
+  http_port_min     = var.common_http_port_min
+  http_port_max     = var.common_http_port_max
+  boot_order        = var.vm_boot_order
+  boot_wait         = var.vm_boot_wait
+  boot_command      = var.vm_boot_command
+  ip_wait_timeout   = var.common_ip_wait_timeout
+  ip_settle_timeout = var.common_ip_settle_timeout
+  shutdown_command  = var.vm_shutdown_command
+  shutdown_timeout  = var.common_shutdown_timeout
 
   // Communicator Settings and Credentials
   communicator   = "winrm"
@@ -169,10 +173,13 @@ source "vsphere-iso" "windows-desktop-ent" {
   insecure_connection = var.vsphere_insecure_connection
 
   // vSphere Settings
-  datacenter = var.vsphere_datacenter
-  cluster    = var.vsphere_cluster
-  datastore  = var.vsphere_datastore
-  folder     = var.vsphere_folder
+  datacenter                     = var.vsphere_datacenter
+  cluster                        = var.vsphere_cluster
+  host                           = var.vsphere_host
+  datastore                      = var.vsphere_datastore
+  folder                         = var.vsphere_folder
+  resource_pool                  = var.vsphere_resource_pool
+  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
 
   // Virtual Machine Settings
   vm_name              = local.vm_name_ent
@@ -202,7 +209,7 @@ source "vsphere-iso" "windows-desktop-ent" {
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths    = local.iso_paths
+  iso_paths = local.iso_paths
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -221,14 +228,15 @@ source "vsphere-iso" "windows-desktop-ent" {
   }
 
   // Boot and Provisioning Settings
-  http_port_min    = var.common_http_port_min
-  http_port_max    = var.common_http_port_max
-  boot_order       = var.vm_boot_order
-  boot_wait        = var.vm_boot_wait
-  boot_command     = var.vm_boot_command
-  ip_wait_timeout  = var.common_ip_wait_timeout
-  shutdown_command = var.vm_shutdown_command
-  shutdown_timeout = var.common_shutdown_timeout
+  http_port_min     = var.common_http_port_min
+  http_port_max     = var.common_http_port_max
+  boot_order        = var.vm_boot_order
+  boot_wait         = var.vm_boot_wait
+  boot_command      = var.vm_boot_command
+  ip_wait_timeout   = var.common_ip_wait_timeout
+  ip_settle_timeout = var.common_ip_settle_timeout
+  shutdown_command  = var.vm_shutdown_command
+  shutdown_timeout  = var.common_shutdown_timeout
 
   // Communicator Settings and Credentials
   communicator   = "winrm"

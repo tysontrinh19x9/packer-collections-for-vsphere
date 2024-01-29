@@ -1,5 +1,5 @@
-#!/bin/sh
-# Copyright 2023 VMware, Inc. All rights reserved
+#!/usr/bin/env sh
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 set -e

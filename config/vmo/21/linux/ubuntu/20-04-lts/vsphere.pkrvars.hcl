@@ -18,5 +18,6 @@ vsphere_datacenter = "VMO"
 #vsphere_cluster    = "sfo-w01-cl01"
 vsphere_host       = "10.0.255.21"
 vsphere_datastore  = "SSD_2048"
-vsphere_network    = "LAN"
+vsphere_network    = "WAN_PCIe"
 vsphere_folder     = "Template"
+vsphere_set_host_for_datastore_uploads = false

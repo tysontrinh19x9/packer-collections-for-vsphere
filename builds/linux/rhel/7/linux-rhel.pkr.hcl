@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Red Hat Enterprise Linux 7 template using the Packer Builder for VMware vSphere (vsphere-iso).
+    Red Hat Enterprise Linux 7 build definition.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 //  BLOCK: packer
@@ -12,13 +13,17 @@
 packer {
   required_version = ">= 1.9.4"
   required_plugins {
-    git = {
-      version = ">= 0.4.3"
-      source  = "github.com/ethanmdavidson/git"
-    }
     vsphere = {
-      version = ">= v1.2.1"
       source  = "github.com/hashicorp/vsphere"
+      version = ">= 1.2.1"
+    }
+    ansible = {
+      source  = "github.com/hashicorp/ansible"
+      version = ">= 1.1.0"
+    }
+    git = {
+      source  = "github.com/ethanmdavidson/git"
+      version = ">= 0.4.3"
     }
   }
 }
@@ -71,11 +76,13 @@ source "vsphere-iso" "linux-rhel" {
   insecure_connection = var.vsphere_insecure_connection
 
   // vSphere Settings
-  datacenter = var.vsphere_datacenter
-  cluster    = var.vsphere_cluster
-  host       = var.vsphere_host
-  datastore  = var.vsphere_datastore
-  folder     = var.vsphere_folder
+  datacenter                     = var.vsphere_datacenter
+  cluster                        = var.vsphere_cluster
+  host                           = var.vsphere_host
+  datastore                      = var.vsphere_datastore
+  folder                         = var.vsphere_folder
+  resource_pool                  = var.vsphere_resource_pool
+  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
 
   // Virtual Machine Settings
   vm_name              = local.vm_name
@@ -113,15 +120,22 @@ source "vsphere-iso" "linux-rhel" {
   boot_order    = var.vm_boot_order
   boot_wait     = var.vm_boot_wait
   boot_command = [
+    // This sends the "up arrow" key, typically used to navigate through boot menu options.
     "<up>",
+    // This sends the "e" key. In the GRUB boot loader, this is used to edit the selected boot menu option.                                
     "e",
+    // This sends two "down arrow" keys, followed by the "end" key, and then waits. This is used to navigate to a specific line in the boot menu option's configuration.            
     "<down><down><end><wait>",
+    // This types the string "text" followed by the value of the 'data_source_command' local variable. 
+    // This is used to modify the boot menu option's configuration to boot in text mode and specify the kickstart data source configured in the common variables.               
     "text ${local.data_source_command}",
+    // This sends the "enter" key, waits, turns on the left control key, sends the "x" key, and then turns off the left control key. This is used to save the changes and exit the boot menu option's configuration, and then continue the boot process.  
     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
   ]
-  ip_wait_timeout  = var.common_ip_wait_timeout
-  shutdown_command = "echo '${var.build_password}' | sudo -S -E shutdown -P now"
-  shutdown_timeout = var.common_shutdown_timeout
+  ip_wait_timeout   = var.common_ip_wait_timeout
+  ip_settle_timeout = var.common_ip_settle_timeout
+  shutdown_command  = "echo '${var.build_password}' | sudo -S -E shutdown -P now"
+  shutdown_timeout  = var.common_shutdown_timeout
 
   // Communicator Settings and Credentials
   communicator       = "ssh"
@@ -168,18 +182,20 @@ build {
   sources = ["source.vsphere-iso.linux-rhel"]
 
   provisioner "ansible" {
-    user          = var.build_username
-    playbook_file = "${path.cwd}/ansible/main.yml"
-    roles_path    = "${path.cwd}/ansible/roles"
+    user                   = var.build_username
+    galaxy_file            = "${path.cwd}/ansible/requirements.yml"
+    galaxy_force_with_deps = true
+    playbook_file          = "${path.cwd}/ansible/main.yml"
+    roles_path             = "${path.cwd}/ansible/roles"
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.cwd}/ansible/ansible.cfg"
     ]
     extra_arguments = [
       "--extra-vars", "display_skipped_hosts=false",
       "--extra-vars", "BUILD_USERNAME=${var.build_username}",
-      "--extra-vars", "BUILD_SECRET='${var.build_key}'",
+      "--extra-vars", "BUILD_KEY='${var.build_key}'",
       "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
-      "--extra-vars", "ANSIBLE_SECRET='${var.ansible_key}'",
+      "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
     ]
   }
 

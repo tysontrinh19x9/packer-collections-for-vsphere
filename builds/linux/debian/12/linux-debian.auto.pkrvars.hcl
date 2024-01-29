@@ -1,9 +1,9 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Debian 12 (Bookworm) build variables.
+    Debian 12 build variables.
 */
 
 // Guest Operating System Metadata
@@ -12,7 +12,7 @@ vm_guest_os_keyboard = "us"
 vm_guest_os_timezone = "UTC"
 vm_guest_os_family   = "linux"
 vm_guest_os_name     = "debian"
-vm_guest_os_version  = "12.0"
+vm_guest_os_version  = "12.2"
 
 // Virtual Machine Guest Operating System Setting
 vm_guest_os_type = "other5xLinux64Guest"
@@ -25,14 +25,14 @@ vm_cpu_cores             = 1
 vm_cpu_hot_add           = false
 vm_mem_size              = 2048
 vm_mem_hot_add           = false
-vm_disk_size             = 10240
+vm_disk_size             = 40960
 vm_disk_controller_type  = ["pvscsi"]
 vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
 // Removable Media Settings
-iso_path           = "ISO"
-iso_file           = "debian-12.2.0-amd64-netinst.iso"
+iso_path = "iso/linux/debian"
+iso_file = "debian-12.2.0-amd64-netinst.iso"
 
 // Boot Settings
 vm_boot_order = "disk,cdrom"

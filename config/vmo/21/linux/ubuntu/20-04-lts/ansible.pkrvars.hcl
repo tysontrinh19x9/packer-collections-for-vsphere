@@ -8,5 +8,5 @@
 */
 
 // Ansible Credentials
-ansible_username = "admin"
-ansible_key      = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAC1xIZk58F+aDWPnBsDzYK4dnwY/IWk5oqTKvBalxOuUuXUd33LcAEIYJHY+hNrhT/pmdDm24VWGnCTk12otCC4WwGvpKWUEDolTEE1hjmGcaXg0b9sIF7NA+Gqq0cuy7VpIXJg4JbDF8pb3gyzxaLZWrDpgj2j7SGXDgnBv3hF+46UcA== admin@linux"
+ansible_username = "ansible"
+ansible_key      = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGkbIDM9uCe16Ynaq1p7g67Z4YGLZzT6NHe608uTboUjZCQGIOmgkvAjIF+DUa9vUcAa4uau9gNO8t92jS9bb3uLgAnaShm3V4/byvjdboOfgWgA6NzkdCa1SJgyzxmi5oIfOTi/l4NAk8ZM1S2N/QQJMADwgWjoLCOoVhA5QTy/coreQ== ansible@vsphere.local"

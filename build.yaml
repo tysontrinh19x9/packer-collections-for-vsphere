@@ -21,6 +21,9 @@ menu:
       - entry: "Debian 11"
         build:
           path: "builds/linux/debian/11/"
+      - entry: "Ubuntu Server 23.10 (cloud-init)"
+        build:
+          path: "builds/linux/ubuntu/23-10/"
       - entry: "Ubuntu Server 22.04 LTS (cloud-init)"
         build:
           path: "builds/linux/ubuntu/22-04-lts/"
@@ -54,6 +57,12 @@ menu:
       - entry: "Rocky Linux 8"
         build:
           path: "builds/linux/rocky/8/"
+      - entry: "Oracle Linux 9"
+        build:
+          path: "builds/linux/oracle/9/"
+      - entry: "Oracle Linux 8"
+        build:
+          path: "builds/linux/oracle/8/"
       - entry: "CentOS Stream 9"
         build:
           path: "builds/linux/centos/9-stream/"
@@ -68,12 +77,6 @@ menu:
           path: "builds/linux/sles/15/"
           var_files:
             - "scc.pkrvars.hcl"
-      - entry: "Oracle Enterprise Linux 9"
-        build:
-          path: "builds/linux/oracle/9/"
-      - entry: "Oracle Enterprise Linux 8"
-        build:
-          path: "builds/linux/oracle/8/"
 
   - entry: "Microsoft Windows"
     build:

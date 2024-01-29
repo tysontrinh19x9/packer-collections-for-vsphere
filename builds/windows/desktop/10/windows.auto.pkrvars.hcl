@@ -1,9 +1,10 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
     DESCRIPTION:
-    Microsoft Windows 10 variables used by the Packer Plugin for VMware vSphere (vsphere-iso).
+    Microsoft Windows 10 build variables.
+    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
 */
 
 // Installation Operating System Metadata
@@ -43,8 +44,8 @@ vm_video_ram             = 32768
 vm_video_displays        = 1
 
 // Removable Media Settings
-iso_path           = "iso/windows/desktop"
-iso_file           = "en-us_windows_10_business_editions_version_22h2_updated_sep_2023_x64_dvd_5c406cd5.iso"
+iso_path = "iso/windows/desktop"
+iso_file = "en-us_windows_10_business_editions_version_22h2_updated_oct_2023_x64_dvd_8fac2c2d.iso"
 
 // Boot Settings
 vm_boot_order       = "disk,cdrom"
