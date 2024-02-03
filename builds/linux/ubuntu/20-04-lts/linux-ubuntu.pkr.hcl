@@ -178,6 +178,10 @@ source "vsphere-iso" "linux-ubuntu" {
       output_directory = local.ovf_export_path
     }
   }
+
+  configuration_parameters = {
+    "disk.EnableUUID"  = "TRUE"
+  }
 }
 
 //  BLOCK: build
