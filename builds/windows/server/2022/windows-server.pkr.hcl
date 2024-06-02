@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -11,19 +11,19 @@
 //  The Packer configuration.
 
 packer {
-  required_version = ">= 1.9.4"
+  required_version = ">= 1.10.0"
   required_plugins {
     vsphere = {
       source  = "github.com/hashicorp/vsphere"
-      version = ">= 1.2.1"
-    }
-    windows-update = {
-      source  = "github.com/rgl/windows-update"
-      version = ">= 0.14.3"
+      version = ">= 1.3.0"
     }
     git = {
       source  = "github.com/ethanmdavidson/git"
-      version = ">= 0.4.3"
+      version = ">= 0.6.2"
+    }
+    ansible = {
+      source  = "github.com/hashicorp/ansible"
+      version = ">= 1.1.0"
     }
   }
 }
@@ -37,11 +37,15 @@ data "git-repository" "cwd" {}
 //  Defines the local variables.
 
 locals {
-  build_by                   = "Built by: HashiCorp Packer ${packer.version}"
-  build_date                 = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
-  build_version              = data.git-repository.cwd.head
-  build_description          = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}"
-  iso_paths                  = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}", "[] /vmimages/tools-isoimages/${var.vm_guest_os_family}.iso"]
+  build_by          = "Built by: HashiCorp Packer ${packer.version}"
+  build_date        = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
+  build_version     = data.git-repository.cwd.head
+  build_description = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}"
+  iso_paths = {
+    content_library = "${var.common_iso_content_library}/${var.iso_content_library_item}/${var.iso_file}",
+    datastore       = "[${var.common_iso_datastore}] ${var.iso_datastore_path}/${var.iso_file}"
+    tools           = "[] /vmimages/tools-isoimages/${var.vm_guest_os_family}.iso"
+  }
   manifest_date              = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   manifest_path              = "${path.cwd}/manifests/"
   manifest_output            = "${local.manifest_path}${local.manifest_date}.json"
@@ -95,11 +99,12 @@ source "vsphere-iso" "windows-server-standard-core" {
   }
   vm_version           = var.common_vm_version
   remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
   tools_upgrade_policy = var.common_tools_upgrade_policy
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths = local.iso_paths
+  iso_paths = var.common_iso_content_library_enabled ? [local.iso_paths.content_library, local.iso_paths.tools] : [local.iso_paths.datastore, local.iso_paths.tools]
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -107,10 +112,11 @@ source "vsphere-iso" "windows-server-standard-core" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       build_username       = var.build_username
       build_password       = var.build_password
+      vm_inst_os_eval      = var.vm_inst_os_eval
       vm_inst_os_language  = var.vm_inst_os_language
       vm_inst_os_keyboard  = var.vm_inst_os_keyboard
       vm_inst_os_image     = var.vm_inst_os_image_standard_core
-      vm_inst_os_kms_key   = var.vm_inst_os_kms_key_standard
+      vm_inst_os_key       = var.vm_inst_os_key_standard
       vm_guest_os_language = var.vm_guest_os_language
       vm_guest_os_keyboard = var.vm_guest_os_keyboard
       vm_guest_os_timezone = var.vm_guest_os_timezone
@@ -138,9 +144,9 @@ source "vsphere-iso" "windows-server-standard-core" {
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
   dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
+    for_each = var.common_content_library_enabled ? [1] : []
     content {
-      library     = var.common_content_library_name
+      library     = var.common_content_library
       description = local.build_description
       ovf         = var.common_content_library_ovf
       destroy     = var.common_content_library_destroy
@@ -150,7 +156,7 @@ source "vsphere-iso" "windows-server-standard-core" {
 
   // OVF Export Settings
   dynamic "export" {
-    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    for_each = var.common_ovf_export_enabled ? [1] : []
     content {
       name  = local.vm_name_standard_core
       force = var.common_ovf_export_overwrite
@@ -201,11 +207,12 @@ source "vsphere-iso" "windows-server-standard-dexp" {
   }
   vm_version           = var.common_vm_version
   remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
   tools_upgrade_policy = var.common_tools_upgrade_policy
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths = local.iso_paths
+  iso_paths = var.common_iso_content_library_enabled ? [local.iso_paths.content_library, local.iso_paths.tools] : [local.iso_paths.datastore, local.iso_paths.tools]
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -213,10 +220,11 @@ source "vsphere-iso" "windows-server-standard-dexp" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       build_username       = var.build_username
       build_password       = var.build_password
+      vm_inst_os_eval      = var.vm_inst_os_eval
       vm_inst_os_language  = var.vm_inst_os_language
       vm_inst_os_keyboard  = var.vm_inst_os_keyboard
       vm_inst_os_image     = var.vm_inst_os_image_standard_desktop
-      vm_inst_os_kms_key   = var.vm_inst_os_kms_key_standard
+      vm_inst_os_key       = var.vm_inst_os_key_standard
       vm_guest_os_language = var.vm_guest_os_language
       vm_guest_os_keyboard = var.vm_guest_os_keyboard
       vm_guest_os_timezone = var.vm_guest_os_timezone
@@ -244,9 +252,9 @@ source "vsphere-iso" "windows-server-standard-dexp" {
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
   dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
+    for_each = var.common_content_library_enabled ? [1] : []
     content {
-      library     = var.common_content_library_name
+      library     = var.common_content_library
       description = local.build_description
       ovf         = var.common_content_library_ovf
       destroy     = var.common_content_library_destroy
@@ -256,7 +264,7 @@ source "vsphere-iso" "windows-server-standard-dexp" {
 
   // OVF Export Settings
   dynamic "export" {
-    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    for_each = var.common_ovf_export_enabled ? [1] : []
     content {
       name  = local.vm_name_standard_desktop
       force = var.common_ovf_export_overwrite
@@ -307,11 +315,12 @@ source "vsphere-iso" "windows-server-datacenter-core" {
   }
   vm_version           = var.common_vm_version
   remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
   tools_upgrade_policy = var.common_tools_upgrade_policy
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths = local.iso_paths
+  iso_paths = var.common_iso_content_library_enabled ? [local.iso_paths.content_library, local.iso_paths.tools] : [local.iso_paths.datastore, local.iso_paths.tools]
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -319,12 +328,13 @@ source "vsphere-iso" "windows-server-datacenter-core" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       build_username       = var.build_username
       build_password       = var.build_password
+      vm_inst_os_eval      = var.vm_inst_os_eval
       vm_inst_os_language  = var.vm_inst_os_language
       vm_inst_os_keyboard  = var.vm_inst_os_keyboard
       vm_inst_os_language  = var.vm_inst_os_language
       vm_inst_os_keyboard  = var.vm_inst_os_keyboard
       vm_inst_os_image     = var.vm_inst_os_image_datacenter_core
-      vm_inst_os_kms_key   = var.vm_inst_os_kms_key_datacenter
+      vm_inst_os_key       = var.vm_inst_os_key_datacenter
       vm_guest_os_language = var.vm_guest_os_language
       vm_guest_os_keyboard = var.vm_guest_os_keyboard
       vm_guest_os_timezone = var.vm_guest_os_timezone
@@ -352,9 +362,9 @@ source "vsphere-iso" "windows-server-datacenter-core" {
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
   dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
+    for_each = var.common_content_library_enabled ? [1] : []
     content {
-      library     = var.common_content_library_name
+      library     = var.common_content_library
       description = local.build_description
       ovf         = var.common_content_library_ovf
       destroy     = var.common_content_library_destroy
@@ -364,7 +374,7 @@ source "vsphere-iso" "windows-server-datacenter-core" {
 
   // OVF Export Settings
   dynamic "export" {
-    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    for_each = var.common_ovf_export_enabled ? [1] : []
     content {
       name  = local.vm_name_datacenter_core
       force = var.common_ovf_export_overwrite
@@ -415,11 +425,12 @@ source "vsphere-iso" "windows-server-datacenter-dexp" {
   }
   vm_version           = var.common_vm_version
   remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
   tools_upgrade_policy = var.common_tools_upgrade_policy
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths = local.iso_paths
+  iso_paths = var.common_iso_content_library_enabled ? [local.iso_paths.content_library, local.iso_paths.tools] : [local.iso_paths.datastore, local.iso_paths.tools]
   cd_files = [
     "${path.cwd}/scripts/${var.vm_guest_os_family}/"
   ]
@@ -427,10 +438,11 @@ source "vsphere-iso" "windows-server-datacenter-dexp" {
     "autounattend.xml" = templatefile("${abspath(path.root)}/data/autounattend.pkrtpl.hcl", {
       build_username       = var.build_username
       build_password       = var.build_password
+      vm_inst_os_eval      = var.vm_inst_os_eval
       vm_inst_os_language  = var.vm_inst_os_language
       vm_inst_os_keyboard  = var.vm_inst_os_keyboard
       vm_inst_os_image     = var.vm_inst_os_image_datacenter_desktop
-      vm_inst_os_kms_key   = var.vm_inst_os_kms_key_datacenter
+      vm_inst_os_key       = var.vm_inst_os_key_datacenter
       vm_guest_os_language = var.vm_guest_os_language
       vm_guest_os_keyboard = var.vm_guest_os_keyboard
       vm_guest_os_timezone = var.vm_guest_os_timezone
@@ -458,9 +470,9 @@ source "vsphere-iso" "windows-server-datacenter-dexp" {
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
   dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
+    for_each = var.common_content_library_enabled ? [1] : []
     content {
-      library     = var.common_content_library_name
+      library     = var.common_content_library
       description = local.build_description
       ovf         = var.common_content_library_ovf
       destroy     = var.common_content_library_destroy
@@ -470,7 +482,7 @@ source "vsphere-iso" "windows-server-datacenter-dexp" {
 
   // OVF Export Settings
   dynamic "export" {
-    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    for_each = var.common_ovf_export_enabled ? [1] : []
     content {
       name  = local.vm_name_datacenter_desktop
       force = var.common_ovf_export_overwrite
@@ -493,32 +505,24 @@ build {
     "source.vsphere-iso.windows-server-datacenter-dexp"
   ]
 
-  provisioner "powershell" {
-    environment_vars = [
-      "BUILD_USERNAME=${var.build_username}"
+  provisioner "ansible" {
+    user                   = var.build_username
+    galaxy_file            = "${path.cwd}/ansible/windows-requirements.yml"
+    galaxy_force_with_deps = true
+    use_proxy              = false
+    playbook_file          = "${path.cwd}/ansible/windows-playbook.yml"
+    roles_path             = "${path.cwd}/ansible/roles"
+    ansible_env_vars = [
+      "ANSIBLE_CONFIG=${path.cwd}/ansible/ansible.cfg"
     ]
-    elevated_user     = var.build_username
-    elevated_password = var.build_password
-    scripts           = formatlist("${path.cwd}/%s", var.scripts)
-  }
-
-  provisioner "powershell" {
-    elevated_user     = var.build_username
-    elevated_password = var.build_password
-    inline            = var.inline
-  }
-
-  provisioner "windows-update" {
-    pause_before    = "30s"
-    search_criteria = "IsInstalled=0"
-    filters = [
-      "exclude:$_.Title -like '*VMware*'",
-      "exclude:$_.Title -like '*Preview*'",
-      "exclude:$_.Title -like '*Defender*'",
-      "exclude:$_.InstallationBehavior.CanRequestUserInput",
-      "include:$true"
+    extra_arguments = [
+      "--extra-vars", "use_proxy=false",
+      "--extra-vars", "ansible_connection=winrm",
+      "--extra-vars", "ansible_user='${var.build_username}'",
+      "--extra-vars", "ansible_password='${var.build_password}'",
+      "--extra-vars", "ansible_port='${var.communicator_port}'",
+      "--extra-vars", "build_username='${var.build_username}'",
     ]
-    restart_timeout = "120m"
   }
 
   post-processor "manifest" {

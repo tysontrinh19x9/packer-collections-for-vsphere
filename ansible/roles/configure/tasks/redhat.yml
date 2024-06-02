@@ -1,12 +1,14 @@
 ---
-# Tasks for unregistering from Red Hat Subscription Manager.
-- name: "Unregistering from Red Hat Subscription Manager."
+# Red Hat Enterprise Linux or derivative specific tasks.
+
+# Tasks for disconnecting from Red Hat Subscription Manager.
+- name: "Disconnecting from Red Hat Subscription Manager."
   redhat_subscription:
     state: absent
   when: ansible_distribution == 'RedHat'
-  
+
 # Tasks for configuring SSH for public key authentication.
-- name: "Configuring SSH for Public Key Authentication."
+- name: "Configuring SSH for Public Key Authentication without cloud-init."
   block:
     - lineinfile:
         path: /etc/ssh/sshd_config
@@ -16,6 +18,31 @@
         path: /etc/ssh/sshd_config
         regexp: '^PubkeyAuthentication'
         line: 'PubkeyAuthentication yes'
+  when: enable_cloudinit == 'false'
+
+- name: "Configuring SSH for Public Key Authentication without cloud-init."
+  block:
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+  when: enable_cloudinit == 'true'
+
+# Tasks for disabling cloud-init ssh module.
+- name: "Disable cloud-init ssh module"
+  lineinfile:
+    path: /etc/cloud/cloud.cfg
+    regexp: '^ssh_pwauth: false'
+    line: 'ssh_pwauth: true'
+  when: enable_cloudinit == 'true'
 
 # Tasks for setting the hostname.
 - name: "Setting the hostname."
@@ -34,3 +61,18 @@
     name: sshd
     state: restarted
     daemon_reload: true
+
+# Tasks for configuring cloud-init.
+- name: "Configuring cloud-init."
+  block:
+    - name: "Message: Configuring cloud-init"
+      debug:
+        msg: "Configuring cloud-init"
+    - blockinfile:
+        path: /etc/cloud/cloud.cfg
+        block: |
+          disable_vmware_customization: false
+    - copy:
+        content: "datasource_list: [ VMware, OVF, None ]"
+        dest: /etc/cloud/cloud.cfg.d/90_dpkg.cfg
+  when: enable_cloudinit == 'true'

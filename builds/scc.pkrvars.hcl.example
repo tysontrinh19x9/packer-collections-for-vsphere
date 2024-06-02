@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -8,5 +8,5 @@
 */
 
 // SUSE Customer Center Credentials
-scc_email = "hello@rainpole.io"
-scc_code  = "R@in!$aG00dThing."
+scc_email = "packer@example.com"
+scc_code  = "VMw@re123!"

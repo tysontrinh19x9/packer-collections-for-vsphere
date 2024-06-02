@@ -1,8 +1,10 @@
 ---
+# Linux distribution specific tasks.
+
 # Tasks for creating the local group for Ansible.
 - name: "Creating the local group for Ansible."
   group:
-    name: "{{ ANSIBLE_USERNAME }}"
+    name: "{{ ansible_username }}"
 
 # Tasks for creating the sudo group.
 - name: "Creating the sudo group."
@@ -12,8 +14,8 @@
 # Tasks for creating the local user for Ansible.
 - name: "Creating the local user for Ansible."
   user:
-    name: "{{ ANSIBLE_USERNAME }}"
-    group: "{{ ANSIBLE_USERNAME }}"
+    name: "{{ ansible_username }}"
+    group: "{{ ansible_username }}"
     groups: sudo
     password: '!'
     shell: /bin/bash
@@ -24,10 +26,10 @@
     user: "{{ item.user }}"
     key: "{{ item.key }}"
   loop:
-    - user: "{{ ANSIBLE_USERNAME }}"
-      key: "{{ ANSIBLE_KEY }}"
-    - user: "{{ BUILD_USERNAME }}"
-      key: "{{ BUILD_KEY }}"
+    - user: "{{ ansible_username }}"
+      key: "{{ ansible_key }}"
+    - user: "{{ build_username }}"
+      key: "{{ build_key }}"
   no_log: true
 
 # Tasks for managing sudoers.d for the local users.
@@ -37,10 +39,9 @@
     user: "{{ item }}"
     commands: ALL
   loop:
-    - "{{ BUILD_USERNAME }}"
-    - "{{ ANSIBLE_USERNAME }}"
+    - "{{ build_username }}"
+    - "{{ ansible_username }}"
 
 - name: "Set password for the default local user."
   shell: |
-    echo {{BUILD_USERNAME}}:{{BUILD_PASSWORD}} | sudo chpasswd
-
+    echo {{ build_username }}:{{ build_password }} | sudo chpasswd

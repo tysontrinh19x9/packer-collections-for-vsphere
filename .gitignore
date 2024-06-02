@@ -67,4 +67,13 @@ manifests/*.json
 .trunk/out
 .trunk/plugins/trunk
 .trunk/trunk.yaml
-.idea
+
+# Python virtual environments
+## Ignore venv directory.
+venv/
+
+# MkDocs documentation
+## Ignore site directory.
+.site/
+
+,idea

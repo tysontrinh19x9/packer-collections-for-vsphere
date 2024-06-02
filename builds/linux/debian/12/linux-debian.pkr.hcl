@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -11,11 +11,11 @@
 //  The Packer configuration.
 
 packer {
-  required_version = ">= 1.9.4"
+  required_version = ">= 1.10.0"
   required_plugins {
     vsphere = {
       source  = "github.com/hashicorp/vsphere"
-      version = ">= 1.2.1"
+      version = ">= 1.3.0"
     }
     ansible = {
       source  = "github.com/hashicorp/ansible"
@@ -23,7 +23,7 @@ packer {
     }
     git = {
       source  = "github.com/ethanmdavidson/git"
-      version = ">= 0.4.3"
+      version = ">= 0.6.2"
     }
   }
 }
@@ -41,11 +41,14 @@ locals {
   build_date        = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
   build_version     = data.git-repository.cwd.head
   build_description = "Version: ${local.build_version}\nBuilt on: ${local.build_date}\n${local.build_by}"
-  iso_paths         = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}"]
-  manifest_date     = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
-  manifest_path     = "${path.cwd}/manifests/"
-  manifest_output   = "${local.manifest_path}${local.manifest_date}.json"
-  ovf_export_path   = "${path.cwd}/artifacts/${local.vm_name}"
+  iso_paths = {
+    content_library = "${var.common_iso_content_library}/${var.iso_content_library_item}/${var.iso_file}",
+    datastore       = "[${var.common_iso_datastore}] ${var.iso_datastore_path}/${var.iso_file}"
+  }
+  manifest_date   = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
+  manifest_path   = "${path.cwd}/manifests/"
+  manifest_output = "${local.manifest_path}${local.manifest_date}.json"
+  ovf_export_path = "${path.cwd}/artifacts/${local.vm_name}"
   data_source_content = {
     "/ks.cfg" = templatefile("${abspath(path.root)}/data/ks.pkrtpl.hcl", {
       build_username           = var.build_username
@@ -54,7 +57,22 @@ locals {
       vm_guest_os_language     = var.vm_guest_os_language
       vm_guest_os_keyboard     = var.vm_guest_os_keyboard
       vm_guest_os_timezone     = var.vm_guest_os_timezone
+      vm_guest_os_cloudinit    = var.vm_guest_os_cloudinit
       common_data_source       = var.common_data_source
+      network = templatefile("${abspath(path.root)}/data/network.pkrtpl.hcl", {
+        device  = var.vm_network_device
+        ip      = var.vm_ip_address
+        netmask = var.vm_ip_netmask
+        gateway = var.vm_ip_gateway
+        dns     = var.vm_dns_list
+      })
+      storage = templatefile("${abspath(path.root)}/data/storage.pkrtpl.hcl", {
+        device     = var.vm_disk_device
+        swap       = var.vm_disk_use_swap
+        partitions = var.vm_disk_partitions
+        lvm        = var.vm_disk_lvm
+      })
+      additional_packages = join(" ", var.additional_packages)
     })
   }
   data_source_command = var.common_data_source == "http" ? "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg" : "file=/media/ks.cfg"
@@ -106,11 +124,12 @@ source "vsphere-iso" "linux-debian" {
   }
   vm_version           = var.common_vm_version
   remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
   tools_upgrade_policy = var.common_tools_upgrade_policy
   notes                = local.build_description
 
   // Removable Media Settings
-  iso_paths    = local.iso_paths
+  iso_paths    = var.common_iso_content_library_enabled ? [local.iso_paths.content_library] : [local.iso_paths.datastore]
   http_content = var.common_data_source == "http" ? local.data_source_content : null
   cd_content   = var.common_data_source == "disk" ? local.data_source_content : null
 
@@ -129,7 +148,7 @@ source "vsphere-iso" "linux-debian" {
     " auto-install/enable=true",
     // This types a string that sets the debconf/priority option to critical. This is used to minimize the number of questions asked during the installation process.
     " debconf/priority=critical",
-    // This types the value of the 'data_source_command' local variable. This is used to specify the kickstart data source configured in the common variables. 
+    // This types the value of the 'data_source_command' local variable. This is used to specify the kickstart data source configured in the common variables.
     " ${local.data_source_command}",
     // This types a string that sets the noprompt option and then sends the "enter" key. This is used to prevent the installer from pausing for user input.
     " noprompt --<enter>",
@@ -167,9 +186,9 @@ source "vsphere-iso" "linux-debian" {
   // Template and Content Library Settings
   convert_to_template = var.common_template_conversion
   dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
+    for_each = var.common_content_library_enabled ? [1] : []
     content {
-      library     = var.common_content_library_name
+      library     = var.common_content_library
       description = local.build_description
       ovf         = var.common_content_library_ovf
       destroy     = var.common_content_library_destroy
@@ -179,7 +198,7 @@ source "vsphere-iso" "linux-debian" {
 
   // OVF Export Settings
   dynamic "export" {
-    for_each = var.common_ovf_export_enabled == true ? [1] : []
+    for_each = var.common_ovf_export_enabled ? [1] : []
     content {
       name  = local.vm_name
       force = var.common_ovf_export_overwrite
@@ -199,9 +218,9 @@ build {
 
   provisioner "ansible" {
     user                   = var.build_username
-    galaxy_file            = "${path.cwd}/ansible/requirements.yml"
+    galaxy_file            = "${path.cwd}/ansible/linux-requirements.yml"
     galaxy_force_with_deps = true
-    playbook_file          = "${path.cwd}/ansible/main.yml"
+    playbook_file          = "${path.cwd}/ansible/linux-playbook.yml"
     roles_path             = "${path.cwd}/ansible/roles"
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.cwd}/ansible/ansible.cfg",
@@ -209,10 +228,11 @@ build {
     ]
     extra_arguments = [
       "--extra-vars", "display_skipped_hosts=false",
-      "--extra-vars", "BUILD_USERNAME=${var.build_username}",
-      "--extra-vars", "BUILD_KEY='${var.build_key}'",
-      "--extra-vars", "ANSIBLE_USERNAME=${var.ansible_username}",
-      "--extra-vars", "ANSIBLE_KEY='${var.ansible_key}'",
+      "--extra-vars", "build_username=${var.build_username}",
+      "--extra-vars", "build_key='${var.build_key}'",
+      "--extra-vars", "ansible_username=${var.ansible_username}",
+      "--extra-vars", "ansible_key='${var.ansible_key}'",
+      "--extra-vars", "enable_cloudinit=${var.vm_guest_os_cloudinit}",
     ]
   }
 

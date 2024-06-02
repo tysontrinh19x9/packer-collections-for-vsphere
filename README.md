@@ -1,11 +1,11 @@
 <!--
-Copyright 2023 Broadcom. All rights reserved.
-# SPDX-License-Identifier: BSD-2
+Copyright 2023-2024 Broadcom. All rights reserved.
+SPDX-License-Identifier: BSD-2
 -->
 
 <!-- markdownlint-disable first-line-h1 no-inline-html -->
 
-<img src="docs/assets/images/icon-color.svg" alt="VMware vSphere" width="100">
+<img src="docs/assets/images/icon-color.svg" alt="VMware vSphere" width="150">
 
 # Packer Examples for VMware vSphere
 
@@ -28,7 +28,7 @@ This project supports the following guest operating systems:
 | VMware Photon OS             | 4         |
 | Debian                       | 12        |
 | Debian                       | 11        |
-| Ubuntu Server                | 23.10     |
+| Ubuntu Server                | 24.04 LTS |
 | Ubuntu Server                | 22.04 LTS |
 | Ubuntu Server                | 20.04 LTS |
 | Red Hat Enterprise Linux     | 9         |
@@ -43,16 +43,18 @@ This project supports the following guest operating systems:
 | CentOS Stream                | 9         |
 | CentOS Stream                | 8         |
 | CentOS Linux                 | 7         |
+| Fedora Server                | 39        |
 | SUSE Linux Enterprise Server | 15        |
 
 ## Microsoft Windows
 
 | Operating System         | Version | Editions                    | Experience       |
 | :---                     | :---    | :---                        | :---             |
+| Microsoft Windows Server | 2025    | Standard and Datacenter     | Core and Desktop |
 | Microsoft Windows Server | 2022    | Standard and Datacenter     | Core and Desktop |
 | Microsoft Windows Server | 2019    | Standard and Datacenter     | Core and Desktop |
-| Microsoft Windows        | 11 22H2 | Professional and Enterprise | -                |
-| Microsoft Windows        | 10 22H2 | Professional and Enterprise | -                |
+| Microsoft Windows        | 11      | Professional and Enterprise | -                |
+| Microsoft Windows        | 10      | Professional and Enterprise | -                |
 
 ## Documentation
 
@@ -83,7 +85,7 @@ You can also start a discussion on the [discussions][gh-discussions] area to ask
 
 ## License
 
-Copyright 2023 Broadcom. All rights reserved.
+Copyright 2023-2024 Broadcom. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

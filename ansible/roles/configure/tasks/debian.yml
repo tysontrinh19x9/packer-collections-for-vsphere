@@ -1,4 +1,6 @@
 ---
+# Debian or derivative specific tasks.
+
 # Tasks for configuring SSH for public key authentication.
 - name: "Configuring SSH for Public Key Authentication."
   lineinfile:
@@ -28,6 +30,9 @@
 # Tasks for configuring cloud-init.
 - name: "Configuring cloud-init."
   block:
+    - name: "Message: Configuring cloud-init"
+      debug:
+        msg: "Configuring cloud-init"
     - file:
         path: "{{ item }}"
         state: absent
@@ -35,19 +40,41 @@
         - /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
         - /etc/cloud/cloud.cfg.d/99-installer.cfg
         - /etc/netplan/00-installer-config.yaml
-    - lineinfile:
+      when: ansible_distribution == 'Ubuntu'
+    - blockinfile:
         path: /etc/cloud/cloud.cfg
-        line: 'disable_vmware_customization: false'
-        create: true
+        block: |
+          disable_vmware_customization: false
     - copy:
         content: 'datasource_list: [ VMware, OVF, None ]'
         dest: /etc/cloud/cloud.cfg.d/90_dpkg.cfg
-  when: ansible_distribution == 'Ubuntu'
+  when: enable_cloudinit == 'true'
+
+- name: "Replacing dhcp with static for Debian"
+  lineinfile:
+    path: /etc/network/interfaces
+    regexp: '^iface ens192 inet dhcp'
+    state: absent
+  when: enable_cloudinit == 'true' and ansible_distribution == 'Debian'
 
 # Tasks for setting SSH keys to regenerate.
 - name: "Setting SSH keys to regenerate."
-  lineinfile:
+  copy:
     dest: /etc/rc.local
+    content: |
+      #!/bin/bash
+      if test -z "$(find /etc/ssh/ -iname 'ssh_host_*_key*')"; then
+          dpkg-reconfigure openssh-server
+      fi
+      exit 0
+    mode: 0755
+
+# Tasks for force setting the guest operating system information for VMware Tools.
+- name: "Setting guest operating system information for VMware Tools."
+  blockinfile:
+    path: /etc/vmware-tools/tools.conf
+    block: |
+      [guestosinfo]
+      short-name = other5xLinux64Guest
     create: true
-    line: "#!/bin/bash\ntest -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server\nexit 0\n"
-    mode: '0755'
+  when: ansible_distribution == 'Debian'

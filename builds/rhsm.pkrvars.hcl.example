@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -8,5 +8,5 @@
 */
 
 // Red Hat Subscription Manager Credentials
-rhsm_username = "rainpole"
-rhsm_password = "R@in!$aG00dThing."
+rhsm_username = "packer"
+rhsm_password = "VMw@re123!"

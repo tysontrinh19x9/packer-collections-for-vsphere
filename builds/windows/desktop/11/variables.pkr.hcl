@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -96,6 +96,11 @@ variable "vm_inst_os_keyboard" {
   default     = "en-US"
 }
 
+variable "vm_inst_os_eval" {
+  type        = bool
+  description = "Build using the operating system evaluation"
+}
+
 variable "vm_inst_os_image_pro" {
   type        = string
   description = "The installation operating system image input."
@@ -106,13 +111,13 @@ variable "vm_inst_os_image_ent" {
   description = "The installation operating system image input."
 }
 
-variable "vm_inst_os_kms_key_pro" {
+variable "vm_inst_os_key_pro" {
   type        = string
-  description = "The installation operating system KMS key input."
+  description = "The installation operating system key input."
 }
-variable "vm_inst_os_kms_key_ent" {
+variable "vm_inst_os_key_ent" {
   type        = string
-  description = "The installation operating system KMS key input."
+  description = "The installation operating system key input."
 }
 
 // Virtual Machine Settings
@@ -175,6 +180,12 @@ variable "vm_cdrom_type" {
   type        = string
   description = "The virtual machine CD-ROM type."
   default     = "sata"
+}
+
+variable "vm_cdrom_count" {
+  type        = string
+  description = "The number of virtual CD-ROMs remaining after the build."
+  default     = 1
 }
 
 variable "vm_cpu_count" {
@@ -268,9 +279,15 @@ variable "common_template_conversion" {
   default     = false
 }
 
-variable "common_content_library_name" {
+variable "common_content_library_enabled" {
+  type        = bool
+  description = "Import the virtual machine into the vSphere content library."
+  default     = true
+}
+
+variable "common_content_library" {
   type        = string
-  description = "The name of the target vSphere content library, if used."
+  description = "The name of the target vSphere content library, if enabled."
   default     = null
 }
 
@@ -308,12 +325,23 @@ variable "common_ovf_export_overwrite" {
 
 // Removable Media Settings
 
-variable "common_iso_datastore" {
-  type        = string
-  description = "The name of the source vSphere datastore for the guest operating system ISO."
+variable "common_iso_content_library_enabled" {
+  type        = bool
+  description = "Import the guest operating system ISO into the vSphere content library."
+  default     = false
 }
 
-variable "iso_path" {
+variable "common_iso_content_library" {
+  type        = string
+  description = "The name of the target vSphere content library for the guest operating system ISO."
+}
+
+variable "common_iso_datastore" {
+  type        = string
+  description = "The name of the target vSphere datastore for the guest operating system ISO."
+}
+
+variable "iso_datastore_path" {
   type        = string
   description = "The path on the source vSphere datastore for the guest operating system ISO."
 }
@@ -321,6 +349,11 @@ variable "iso_path" {
 variable "iso_file" {
   type        = string
   description = "The file name of the guest operating system ISO."
+}
+
+variable "iso_content_library_item" {
+  type        = string
+  description = "The vSphere content library item name for the guest operating system ISO."
 }
 
 // Boot Settings
@@ -422,6 +455,20 @@ variable "communicator_port" {
 variable "communicator_timeout" {
   type        = string
   description = "The timeout for the communicator protocol."
+}
+
+// Ansible Credentials
+
+variable "ansible_username" {
+  type        = string
+  description = "The username for Ansible to login to the guest operating system."
+  sensitive   = true
+}
+
+variable "ansible_key" {
+  type        = string
+  description = "The public key for Ansible to login to the guest operating system."
+  sensitive   = true
 }
 
 // Provisioner Settings
