@@ -16,7 +16,8 @@ vsphere_insecure_connection = true
 // vSphere Settings
 vsphere_datacenter = "VMO"
 #vsphere_cluster    = "sfo-w01-cl01"
-vsphere_host       = "10.0.255.230"
-vsphere_datastore  = "SSD_2048_230"
-vsphere_network    = "LAN"
+vsphere_host       = "10.0.255.22"
+vsphere_datastore  = "SSD_2048"
+vsphere_network    = "WAN_USB"
 vsphere_folder     = "Template"
+vsphere_set_host_for_datastore_uploads = false

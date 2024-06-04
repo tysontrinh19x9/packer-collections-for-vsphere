@@ -1,4 +1,4 @@
-# Copyright 2023 Broadcom. All rights reserved.
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
 /*
@@ -12,7 +12,7 @@ vm_guest_os_keyboard = "us"
 vm_guest_os_timezone = "UTC"
 vm_guest_os_family   = "linux"
 vm_guest_os_name     = "debian"
-vm_guest_os_version  = "11.8"
+vm_guest_os_version  = "11.9"
 
 // Virtual Machine Guest Operating System Setting
 vm_guest_os_type = "other5xLinux64Guest"
@@ -20,22 +20,24 @@ vm_guest_os_type = "other5xLinux64Guest"
 // Virtual Machine Hardware Settings
 vm_firmware              = "efi-secure"
 vm_cdrom_type            = "sata"
+vm_cdrom_count           = 1
 vm_cpu_count             = 2
 vm_cpu_cores             = 1
 vm_cpu_hot_add           = false
 vm_mem_size              = 2048
 vm_mem_hot_add           = false
-vm_disk_size             = 40960
+vm_disk_size             = 10240
 vm_disk_controller_type  = ["pvscsi"]
 vm_disk_thin_provisioned = true
 vm_network_card          = "vmxnet3"
 
 // Removable Media Settings
-iso_path = "iso/linux/debian"
-iso_file = "debian-11.8.0-amd64-netinst.iso"
+iso_datastore_path       = "ISO"
+iso_content_library_item = "debian-12.5.0-amd64-DVD"
+iso_file                 = "debian-12.5.0-amd64-DVD-1.iso"
 
 // Boot Settings
-vm_boot_order = "disk,cdrom"
+vm_boot_order = "-"
 vm_boot_wait  = "5s"
 
 // Communicator Settings
