@@ -44,3 +44,5 @@ vm_boot_wait  = "5s"
 // Communicator Settings
 communicator_port    = 22
 communicator_timeout = "30m"
+
+additional_packages = ["vim"]
