@@ -34,8 +34,8 @@ vm_network_card          = "vmxnet3"
 
 // Removable Media Settings
 iso_datastore_path       = "ISO"
-iso_content_library_item = "debian-12.5.0-amd64-DVD"
-iso_file                 = "debian-12.5.0-amd64-DVD-1.iso"
+iso_content_library_item = "debian-12.5.0-amd64-netinst"
+iso_file                 = "debian-12.5.0-amd64-netinst.iso"
 
 // Boot Settings
 vm_boot_order = "-"
