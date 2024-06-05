@@ -11,5 +11,5 @@
 // Default Account Credentials
 build_username           = "debian"
 build_password           = "naibed"
-build_password_encrypted = "$6$rounds=4096$8z6U4Ouyv3op488y$4jFgCThnbn/PWzPGFtnwZXNaFCRp9ofofVSak2QPW.VOmfiZsVSXyWyh8oHl7w9LpgDKLE/cgnJypnvCl1LbT1"
-build_key                = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAC1xIZk58F+aDWPnBsDzYK4dnwY/IWk5oqTKvBalxOuUuXUd33LcAEIYJHY+hNrhT/pmdDm24VWGnCTk12otCC4WwGvpKWUEDolTEE1hjmGcaXg0b9sIF7NA+Gqq0cuy7VpIXJg4JbDF8pb3gyzxaLZWrDpgj2j7SGXDgnBv3hF+46UcA== debian@linux"
+build_password_encrypted = "$6$Musgfu/T$XSsyO2YXUKrRjkvPo6yMJoTuaVUwFTw5ykyfiGP/jQqK6M890SBv9zQWcwqstFBiwWiQbQFBC8sbMTSywsVJi/"
+build_key                = "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBABEuiOKU29kKYoz9xfw/QHn1SgakYs/1eR9vqY3CIFuN0svlwuV3GEbwM4LPDHld/DmRF4IIufxdMazXIBtuT9InQBwU8IXT4DYhFaUWHVM0Z2EOXBywT1bRxuTYeR89e5oDTKKkKVDb0nolpkfgrXTbw/zLV+kGuy5pFz+s1xHeKNNGA== debian@vsphere.local"
