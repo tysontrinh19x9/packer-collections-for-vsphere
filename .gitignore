@@ -76,4 +76,4 @@ venv/
 ## Ignore site directory.
 .site/
 
-,idea
+.idea
