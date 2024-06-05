@@ -14,7 +14,7 @@ common_remove_cdrom = true
 
 // Template and Content Library Settings
 common_template_conversion     = true
-common_content_library         = "ubuntu"
+common_content_library         = "debian"
 common_content_library_enabled = false
 common_content_library_ovf     = false
 common_content_library_destroy = false

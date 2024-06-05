@@ -12,10 +12,11 @@ vm_guest_os_keyboard = "us"
 vm_guest_os_timezone = "UTC"
 vm_guest_os_family   = "linux"
 vm_guest_os_name     = "debian"
-vm_guest_os_version  = "11.9"
+vm_guest_os_version  = "12.5"
 
 // Virtual Machine Guest Operating System Setting
-vm_guest_os_type = "other5xLinux64Guest"
+vm_guest_os_type      = "other5xLinux64Guest"
+vm_guest_os_cloudinit = true
 
 // Virtual Machine Hardware Settings
 vm_firmware              = "efi-secure"
