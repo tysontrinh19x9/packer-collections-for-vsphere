@@ -88,7 +88,3 @@
     file:
       path: "{{ ansible_env.HOME }}/.bash_history"
       state: absent
-
-- name: "Set password for the default local user."
-  shell: |
-    echo {{ build_username }}:{{ build_password }} >> /tmp/test.txt

@@ -33,9 +33,9 @@ d-i mirror/http/proxy string
 d-i passwd/root-login boolean false
 d-i passwd/user-fullname string ${build_username}
 d-i passwd/username string ${build_username}
-d-i passwd/user-password password ${build_password}
-d-i passwd/user-password-again password ${build_password}
-#d-i passwd/user-password-crypted password ${build_password_encrypted}
+# d-i passwd/user-password password ${build_password}
+# d-i passwd/user-password-again password ${build_password}
+d-i passwd/user-password-crypted password ${build_password_encrypted}
 
 # Package Configuration
 d-i pkgsel/run_tasksel boolean false
